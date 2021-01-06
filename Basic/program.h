@@ -10,6 +10,8 @@
 
 #include <string>
 #include "statement.h"
+#include "../StanfordCPPLib/tokenscanner.h"
+
 using namespace std;
 
 /*
@@ -36,7 +38,7 @@ public:
  * Constructs an empty BASIC program.
  */
 
-   Program();
+   Program() = default;
 
 /*
  * Destructor: ~Program
@@ -67,7 +69,7 @@ public:
  * program in the correct sequence.
  */
 
-   void addSourceLine(int lineNumber,TokenScanner* scanner);
+   void addSourceLine(int lineNumber, TokenScanner *scanner);
 
 /*
  * Method: removeSourceLine
@@ -81,27 +83,6 @@ public:
 
    void removeSourceLine(int lineNumber);
 
-/*
- * Method: getSourceLine
- * Usage: string line = program.getSourceLine(lineNumber);
- * -------------------------------------------------------
- * Returns the program line with the specified line number.
- * If no such line exists, this method returns the empty string.
- */
-
-   std::string getSourceLine(int lineNumber);
-
-/*
- * Method: setParsedStatement
- * Usage: program.setParsedStatement(lineNumber, stmt);
- * ----------------------------------------------------
- * Adds the parsed representation of the statement to the statement
- * at the specified line number.  If no such line exists, this
- * method raises an error.  If a previous parsed representation
- * exists, the memory for that statement is reclaimed.
- */
-
-   void setParsedStatement(int lineNumber, Statement *stmt);
 
 /*
  * Method: getParsedStatement
@@ -124,6 +105,8 @@ public:
 
    int getFirstLineNumber();
 
+   int getPreviousLineNumber(int lineNumber);
+
 /*
  * Method: getNextLineNumber
  * Usage: int nextLine = program.getNextLineNumber(lineNumber);
@@ -134,16 +117,18 @@ public:
  */
 
    int getNextLineNumber(int lineNumber);
-    void run(EvalState &state);
-    void list();
-    int getPreLineNumber(int index);
+
+   void run(EvalState &state);
+
+   void list();
 private:
-    std::map<int ,Statement*> pro_map;//要用指针，因为stmt是抽象类，不用指针不能指向派生类
+    std::map<int, Statement*> pro_map;
 // Fill this in with whatever types and instance variables you need
 
 };
 
-stmttype convertTOtype(string typestr);
-Statement *convertToStatement(TokenScanner *scanner,  stmttype &type, int lineNumber);
-void dealSpecial(TokenScanner *scanner, EvalState &state, Program &program);
+void dealspecial(TokenScanner *scanner, EvalState &state, Program &program);
+
+Statement *convertToStatement(TokenScanner *scanner, bool direct, Program &program, StatementType &type, int _lineNumber = 0);
+
 #endif

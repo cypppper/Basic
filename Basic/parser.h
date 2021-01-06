@@ -6,10 +6,8 @@
 
 #ifndef _parser_h
 #define _parser_h
-
 #include <string>
 #include "exp.h"
-
 #include "../StanfordCPPLib/tokenscanner.h"
 
 /*

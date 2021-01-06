@@ -11,12 +11,16 @@
 
 #ifndef _statement_h
 #define _statement_h
-#include "../StanfordCPPLib/tokenscanner.h"
+
 #include "evalstate.h"
 #include "exp.h"
+#include "../StanfordCPPLib/tokenscanner.h"
 
 
-enum stmttype {REM,LET,PRINT,INPUT,GOTO,IF,END,DELETE,ERROR,RUN,QUIT,CLEAR,LIST};
+enum StatementType {LET, PRINT, INPUT, GOTO,
+                    CONDITIONAL, END, REM, RUN, ERROR,
+                    QUIT,CLEAR, LIST, DELETE};
+
 /*
  * Class: Statement
  * ----------------
@@ -26,7 +30,6 @@ enum stmttype {REM,LET,PRINT,INPUT,GOTO,IF,END,DELETE,ERROR,RUN,QUIT,CLEAR,LIST}
  * for each of the statement and command types required for the
  * BASIC interpreter.
  */
-
 class Statement {
 
 public:
@@ -38,7 +41,8 @@ public:
  * its own constructor.
  */
 
-   Statement(TokenScanner * scanner,int line_num);
+    Statement() = default;
+
 
 /*
  * Destructor: ~Statement
@@ -61,75 +65,81 @@ public:
  * method takes an EvalState object for looking up variables or
  * controlling the operation of the interpreter.
  */
+   Statement(int _lineNumber);
+
+    Statement(TokenScanner *_scanner, int _lineNumber);
 
    virtual void execute(EvalState & state) = 0;
-   virtual void print() const=0;
 
-protected:
-    int linenum;
-    string line;
-};
-class Remstmt: public Statement{
+
+   virtual void print() const = 0;
 public:
-    Remstmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
+    string line;
+    int lineNumber;
+};
 
-     void execute(EvalState& state)override;
+class Letstmt: public Statement {
+public:
+    Letstmt(TokenScanner *_scanner, int _lineNumber);
+
+     void execute(EvalState &state) override;
 
      void print() const override;
-
 };
-class Letstmt: public Statement{
+
+class Printstmt : public Statement {
 public:
-    Letstmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
-    void execute(EvalState &state)override;
+    Printstmt(TokenScanner *_scanner, int _lineNumber);
+
+    void execute(EvalState &state) override;
 
     void print() const override;
 };
-class Printstmt: public Statement{
+
+class Inputstmt : public Statement {
 public:
-    Printstmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
-    void execute(EvalState &state)override;
+    Inputstmt(TokenScanner *_scanner, int _lineNumber);
+
+   void execute(EvalState &state) override;
+
+    void print() const override    ;
+};
+
+class Gotostmt : public Statement {
+public:
+    Gotostmt(TokenScanner *_scanner, int _lineNumber);
+
+    void execute(EvalState &state) override;
+    void print() const override;
+};
+
+class Ifstmt : public Statement {
+public:
+    Ifstmt (TokenScanner *_scanner, int _lineNumber);
+
+   void execute(EvalState &state) override;
+
+  void print() const override;
+};
+
+class Endstmt : public Statement {
+public:
+    Endstmt(int _lineNumber);
+
+   void execute(EvalState &state)override;
 
     void print() const override;
 };
-class Inputstmt: public Statement{
+
+class Remstmt : public Statement {
 public:
-    Inputstmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
-    void execute(EvalState &state)override;
+    Remstmt(TokenScanner *_scanner, int _lineNumber);
+
+     void execute(EvalState &state)override;
 
     void print() const override;
 };
-class Gotostmt: public Statement{
-public:
-    Gotostmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
-    void execute(EvalState &state)override;
+TokenScanner * init_scanner(const string&);
 
-    void print() const override;
-};
-class Ifstmt: public Statement{
-public:
-    Ifstmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
-    void execute(EvalState &state)override;
-
-    void print() const override;
-};
-class Endstmt: public Statement{
-public:
-    Endstmt(TokenScanner* scanner,int  _lineNumber):Statement(scanner,_lineNumber) {};
-    void execute(EvalState &state)override;
-
-    void print() const override;
-};
-TokenScanner *scanner_Init(const string &line);
-/*
- * The remainder of this file must consists of subclass
- * definitions for the individual statement forms.  Each of
- * those subclasses must define a constructor that parses a
- * statement from a scanner and a method called execute,
- * which executes that statement.  If the private data for
- * a subclass includes data allocated on the heap (such as
- * an Expression object), the class implementation must also
- * specify its own destructor method to free that memory.
- */
-
+StatementType stmt_type(TokenScanner *scanner);
 #endif

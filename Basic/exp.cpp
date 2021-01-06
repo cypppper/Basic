@@ -6,11 +6,9 @@
 
 #include <string>
 #include "../StanfordCPPLib/error.h"
+#include "../StanfordCPPLib/strlib.h"
 #include "evalstate.h"
 #include "exp.h"
-
-#include "../StanfordCPPLib/strlib.h"
-
 using namespace std;
 
 /*
@@ -64,11 +62,12 @@ int ConstantExp::getValue() {
  */
 
 IdentifierExp::IdentifierExp(string name) {
+    if(name ==  "LET") error("SYNTAX ERROR");
    this->name = name;
 }
 
 int IdentifierExp::eval(EvalState & state) {
-   if (!state.isDefined(name)) error(name + " is undefined");
+   if (!state.isDefined(name)) error("VARIABLE NOT DEFINED");
    return state.getValue(name);
 }
 
@@ -88,7 +87,7 @@ string IdentifierExp::getName() {
  * Implementation notes: the CompoundExp subclass
  * ----------------------------------------------
  * The CompoundExp subclass declares instance variables for the operator
- * and the left and right subexpressions.  The implementation of eval 
+ * and the left and right subexpressions.  The implementation of eval
  * evaluates the subexpressions recursively and then applies the operator.
  */
 
@@ -113,9 +112,6 @@ CompoundExp::~CompoundExp() {
 
 int CompoundExp::eval(EvalState & state) {
    if (op == "=") {
-      if (lhs->getType() != IDENTIFIER) {
-         error("Illegal variable in assignment");
-      }
       int val = rhs->eval(state);
       state.setValue(((IdentifierExp *) lhs)->getName(), val);
       return val;
@@ -126,11 +122,11 @@ int CompoundExp::eval(EvalState & state) {
    if (op == "-") return left - right;
    if (op == "*") return left * right;
    if (op == "/") {
-       if (right==0){
+       if(right == 0) {
            error("DIVIDE BY ZERO");
        }
-       return left / right; }
-   error("Illegal operator in expression");
+       return left / right;
+   }
    return 0;
 }
 

@@ -10,9 +10,7 @@
 #define _evalstate_h
 
 #include <string>
-
 #include "../StanfordCPPLib/map.h"
-
 
 /*
  * Class: EvalState
@@ -29,7 +27,7 @@
 class EvalState {
 
 public:
-
+    int currentLine;
 /*
  * Constructor: EvalState
  * Usage: EvalState state;
@@ -72,12 +70,14 @@ public:
  * --------------------------------------
  * Returns true if the specified variable is defined.
  */
-    void clear();
+
    bool isDefined(std::string var);
 
+   void clear();
 
-    int cur_line;
-    Map<std::string,int> symbolTable;
+private:
+
+   Map<std::string,int> symbolTable;
 
 };
 

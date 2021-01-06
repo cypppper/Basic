@@ -3,30 +3,25 @@
  * ----------------
  * Implements the parser.h interface.
  */
-
 #include <iostream>
 #include <string>
-
 #include "exp.h"
 #include "parser.h"
-
 #include "../StanfordCPPLib/error.h"
 #include "../StanfordCPPLib/strlib.h"
 #include "../StanfordCPPLib/tokenscanner.h"
 using namespace std;
-
 /*
  * Implementation notes: parseExp
  * ------------------------------
  * This code just reads an expression and then checks for extra tokens.
  */
-
 Expression *parseExp(TokenScanner & scanner) {
-   Expression *exp = readE(scanner);
-   if (scanner.hasMoreTokens()) {
-      error("parseExp: Found extra token: " + scanner.nextToken());
-   }
-   return exp;
+    Expression *exp = readE(scanner);
+    if (scanner.hasMoreTokens()) {
+       error("parseExp: Found extra token: " + scanner.nextToken());
+    }
+    return exp;
 }
 
 /*

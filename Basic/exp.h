@@ -20,7 +20,6 @@
 
 enum ExpressionType { CONSTANT, IDENTIFIER, COMPOUND };
 
-
 /*
  * Class: Expression
  * -----------------
@@ -118,7 +117,6 @@ public:
  */
 
    ConstantExp(int value);
-
 
 /*
  * Prototypes for the virtual methods
